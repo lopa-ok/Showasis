@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Showasis",
-  description: "Showasis is a shower slot booking platform for stasis"
+  description: "Showasis is a shower booking platform"
 };
 
 export default function RootLayout({
@@ -13,7 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="min-h-screen bg-surface text-textPrimary antialiased">
+        {children}
+      </body>
     </html>
   )
 }
