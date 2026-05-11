@@ -20,12 +20,22 @@ const formatTime = (iso: string, timezone: string) =>
 const formatRange = (start: string, end: string, timezone: string) =>
   `${formatTime(start, timezone)} - ${formatTime(end, timezone)}`;
 
+const normalizeTimezone = (zone: string) => zone.trim();
+
+const formatTimezoneLabel = (zone: string) => {
+  const normalized = normalizeTimezone(zone);
+  if (["America/Chicago", "US/Central", "CST6CDT"].includes(normalized)) {
+    return "Austin (Central)";
+  }
+  return normalized;
+};
+
 export default function HomePage() {
   const [slots, setSlots] = useState<SlotView[]>([]);
   const [status, setStatus] = useState<StatusState>({ type: "loading", message: "Syncing slots..." });
   const [isSyncing, setIsSyncing] = useState(false);
   const [identity, setIdentity] = useState<LocalIdentity>({ id: "", displayName: "" });
-  const [timezone, setTimezone] = useState("America/Los_Angeles");
+  const [timezone, setTimezone] = useState("America/Chicago");
   const [currentSlotId, setCurrentSlotId] = useState<string | undefined>();
   const [nextSlotId, setNextSlotId] = useState<string | undefined>();
   const [scheduleWarnings, setScheduleWarnings] = useState<string[]>([]);
@@ -209,7 +219,7 @@ export default function HomePage() {
             <div>
               <p className="label">next 24 hours</p>
               <p className="calendar-range">
-                {DateTime.now().setZone(timezone).toFormat("EEEE, LLL dd")} · {timezone}
+                {DateTime.now().setZone(timezone).toFormat("EEEE, LLL dd")} · {formatTimezoneLabel(timezone)}
               </p>
             </div>
             <div className="status-banner" data-state={status.type}>

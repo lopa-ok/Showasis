@@ -13,4 +13,4 @@ const rawBaseId = requireEnv("AIRTABLE_BASE_ID");
 export const AIRTABLE_BASE_ID = rawBaseId.split("/")[0];
 export const AIRTABLE_TABLE_NAME = requireEnv("AIRTABLE_TABLE_NAME");
 
-export const EVENT_TIMEZONE = process.env.EVENT_TIMEZONE ?? "America/Los_Angeles";
+export const EVENT_TIMEZONE = "America/Chicago";
