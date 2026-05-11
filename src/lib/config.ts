@@ -16,17 +16,17 @@ export type AirtableConfig = {
   tableName: string;
 };
 
-export const getAirtableConfig = (): AirtableConfig => {
-  const apiToken = requireEnv("AIRTABLE_API_TOKEN");
-  const rawBaseId = requireEnv("AIRTABLE_BASE_ID");
-  const tableName = requireEnv("AIRTABLE_TABLE_NAME");
-
-  return {
-    apiToken,
-    baseId: rawBaseId.split("/")[0],
-    tableName,
-  };
+const airtableConfig: AirtableConfig = {
+  apiToken: requireEnv("AIRTABLE_API_TOKEN"),
+  baseId: requireEnv("AIRTABLE_BASE_ID").split("/")[0],
+  tableName: requireEnv("AIRTABLE_TABLE_NAME"),
 };
+
+export const getAirtableConfig = (): AirtableConfig => ({ ...airtableConfig });
+
+export const AIRTABLE_API_TOKEN = airtableConfig.apiToken;
+export const AIRTABLE_BASE_ID = airtableConfig.baseId;
+export const AIRTABLE_TABLE_NAME = airtableConfig.tableName;
 
 export type SlackConfig = {
   clientId: string;
