@@ -31,7 +31,7 @@ export async function POST(request: Request) {
 
     const validation = validateBooking(slot, mergedSlots, userId);
 
-    if (!validation.ok) {
+    if (!validation.ok) { 
       return NextResponse.json({ ok: false, message: validation.message }, { status: 400 });
     }
 

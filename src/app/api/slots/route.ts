@@ -11,7 +11,7 @@ import {
 } from "@/lib/booking";
 import { EVENT_TIMEZONE } from "@/lib/config";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 15;
 
 export async function GET() {
   try {

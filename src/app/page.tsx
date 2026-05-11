@@ -60,7 +60,7 @@ export default function HomePage() {
   useEffect(() => {
     setIdentity(loadLocalIdentity());
     loadSlots(true);
-    const interval = window.setInterval(() => loadSlots(), 5000);
+    const interval = window.setInterval(() => loadSlots(), 30000);
     return () => window.clearInterval(interval);
   }, []);
 
