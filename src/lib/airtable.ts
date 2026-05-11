@@ -1,15 +1,16 @@
 import "server-only";
 
-import { AIRTABLE_API_TOKEN, AIRTABLE_BASE_ID, AIRTABLE_TABLE_NAME } from "./config";
+import { getAirtableConfig } from "./config";
 import type { AirtableBookingFields, AirtableRecord, Booking } from "./types";
 
-const TABLE_URL = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE_NAME)}`;
+const { apiToken, baseId, tableName } = getAirtableConfig();
+const TABLE_URL = `https://api.airtable.com/v0/${baseId}/${encodeURIComponent(tableName)}`;
 
 const airtableFetch = async <T>(url: string, init: RequestInit = {}): Promise<T> => {
   const response = await fetch(url, {
     ...init,
     headers: {
-      Authorization: `Bearer ${AIRTABLE_API_TOKEN}`,
+      Authorization: `Bearer ${apiToken}`,
       "Content-Type": "application/json",
       ...(init.headers ?? {}),
     },
