@@ -11,7 +11,8 @@ export const buildSlotView = (slot: Slot): SlotView => ({
     isBuffer: slot.type === "buffer",
 });
 
-const toIso = (value: DateTime) => value.toUTC().toISO();
+const toIso = (value: DateTime) =>
+    value.toUTC().toISO() ?? value.toUTC().toFormat("yyyy-LL-dd'T'HH:mm:ss'Z'");
 
 export const generateScheduleSlots = (options?: {
     startDate?: string;
