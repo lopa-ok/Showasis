@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   try {
-    const { clientId, clientSecret, redirectUri } = getSlackConfig();
+    const { clientId, clientSecret, redirectUri, allowedUserIds } = getSlackConfig();
     const { searchParams } = new URL(request.url);
     const code = searchParams.get("code");
     const state = searchParams.get("state");
@@ -62,6 +62,13 @@ export async function GET(request: Request) {
       return NextResponse.json(
         { ok: false, message: "Slack did not return a usable token." },
         { status: 400 }
+      );
+    }
+    
+    if (allowedUserIds.length > 0 && !allowedUserIds.includes(userId)) {
+      return NextResponse.json(
+        { ok: false, message: "Your Slack ID is not authorized to use this application." },
+        { status: 403 }
       );
     }
 
