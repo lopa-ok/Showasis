@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     const displayName = String(body.displayName || "").trim();
 
     if (!slotId || !userId || !displayName) {
-      return NextResponse.json({ ok: false, message: "Slot and display name are required." }, { status: 400 });
+      return NextResponse.json({ ok: false, message: "Slack sign-in is required to book." }, { status: 400 });
     }
 
     const schedule = generateScheduleSlots();
