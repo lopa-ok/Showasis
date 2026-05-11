@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { createBooking, fetchBookings } from "@/lib/airtable";
+import { getSlackConfig } from "@/lib/config";
 import {
   buildSlotView,
   generateScheduleSlots,
@@ -19,6 +20,11 @@ export async function POST(request: Request) {
 
     if (!slotId || !userId || !displayName) {
       return NextResponse.json({ ok: false, message: "Slack sign-in is required to book." }, { status: 400 });
+    }
+
+    const { allowedUserIds } = getSlackConfig();
+    if (allowedUserIds.length > 0 && !allowedUserIds.includes(userId)) {
+      return NextResponse.json({ ok: false, message: "You are not authorized to book a slot." }, { status: 403 });
     }
 
     const schedule = generateScheduleSlots();

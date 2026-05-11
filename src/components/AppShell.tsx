@@ -11,7 +11,9 @@ export default function AppShell({ title, subtitle, children }: AppShellProps) {
     <div className="app-shell">
       <header className="shell-header">
         <p className="label">shower booking</p>
-        <h1 className="display-title">{title}</h1>
+        <div className="flex justify-center items-center my-4">
+          <img src="/logo.png" alt="Showasis Logo" className="h-16 w-auto object-contain" />
+        </div>
         <p className="display-subtitle">{subtitle}</p>
       </header>
       <main className="shell-main">{children}</main>

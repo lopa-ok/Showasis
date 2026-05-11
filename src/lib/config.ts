@@ -33,6 +33,7 @@ export type SlackConfig = {
   clientSecret: string;
   redirectUri: string;
   scopes: string[];
+allowedUserIds: string[];
 };
 
 export const getSlackConfig = (): SlackConfig => {
@@ -55,11 +56,18 @@ export const getSlackConfig = (): SlackConfig => {
   .map((scope: string) => scope.trim())
     .filter(Boolean);
 
+
+  const allowedUserIds = (process.env.SLACK_ALLOWED_USER_IDS || "")
+    .split(",")
+    .map((id: string) => id.trim())
+    .filter(Boolean);
+
   return {
     clientId,
     clientSecret,
     redirectUri,
     scopes,
+    allowedUserIds,
   };
 };
 
