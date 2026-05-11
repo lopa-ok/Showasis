@@ -61,7 +61,7 @@ const SlackCallbackContent = () => {
 
 export default function SlackCallbackPage() {
   return (
-    <AppShell title="Showasis" subtitle="Slack sign-in">
+    <AppShell subtitle="Slack sign-in">
       <Suspense
         fallback={
           <section className="panel panel-solid">

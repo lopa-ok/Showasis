@@ -1,18 +1,18 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
 
 type AppShellProps = {
-  title: string;
   subtitle: string;
   children: ReactNode;
 };
 
-export default function AppShell({ title, subtitle, children }: AppShellProps) {
+export default function AppShell({ subtitle, children }: AppShellProps) {
   return (
     <div className="app-shell">
       <header className="shell-header">
         <p className="label">shower booking</p>
         <div className="flex justify-center items-center my-4">
-          <img src="/logo.png" alt="Showasis Logo" className="h-16 w-auto object-contain" />
+          <Image src="/logo.png" alt="Showasis Logo" width={200} height={64} className="h-16 w-auto object-contain" priority />
         </div>
         <p className="display-subtitle">{subtitle}</p>
       </header>

@@ -139,7 +139,7 @@ export default function HomePage() {
   };
 
   return (
-    <AppShell title="Showasis" subtitle="Reserve your shower slot">
+    <AppShell subtitle="Reserve your shower slot">
       <section className="calendar-layout">
         <aside className="calendar-sidebar">
           <article className="panel panel-solid panel-glow">
