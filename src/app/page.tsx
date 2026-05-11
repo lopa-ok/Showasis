@@ -94,6 +94,50 @@ export default function HomePage() {
     setIdentity({ id: "", displayName: "" });
   };
 
+  const handleBook = async (slotId: string) => {
+    setStatus({ type: "loading", message: "Locking your shower slot..." });
+    try {
+      const response = await fetch("/api/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slotId,
+          userId: identity.id,
+          displayName: identity.displayName,
+        }),
+      });
+      const data = (await response.json()) as { ok: boolean; message: string };
+      if (!response.ok || !data.ok) {
+        throw new Error(data.message || "Unable to book slot.");
+      }
+      setStatus({ type: "success", message: data.message });
+      await loadSlots();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to book slot.";
+      setStatus({ type: "error", message });
+    }
+  };
+
+  const handleCancel = async (slotId: string) => {
+    setStatus({ type: "loading", message: "Canceling your booking..." });
+    try {
+      const response = await fetch("/api/cancel", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ slotId, userId: identity.id }),
+      });
+      const data = (await response.json()) as { ok: boolean; message: string };
+      if (!response.ok || !data.ok) {
+        throw new Error(data.message || "Unable to cancel booking.");
+      }
+      setStatus({ type: "success", message: data.message });
+      await loadSlots();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to cancel booking.";
+      setStatus({ type: "error", message });
+    }
+  };
+
   return (
     <AppShell title="Showasis" subtitle="Reserve your shower slot">
       <section className="calendar-layout">
