@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import AppShell from "@/components/AppShell";
 import { saveSlackIdentity } from "@/lib/identity";
 
-export default function SlackCallbackPage() {
+const SlackCallbackContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [message, setMessage] = useState("Connecting to Slack...");
@@ -53,10 +53,24 @@ export default function SlackCallbackPage() {
   }, [router, searchParams]);
 
   return (
+    <section className="panel panel-solid">
+      <p className="panel-body">{message}</p>
+    </section>
+  );
+};
+
+export default function SlackCallbackPage() {
+  return (
     <AppShell title="Showasis" subtitle="Slack sign-in">
-      <section className="panel panel-solid">
-        <p className="panel-body">{message}</p>
-      </section>
+      <Suspense
+        fallback={
+          <section className="panel panel-solid">
+            <p className="panel-body">Connecting to Slack...</p>
+          </section>
+        }
+      >
+        <SlackCallbackContent />
+      </Suspense>
     </AppShell>
   );
 }
