@@ -43,6 +43,7 @@ export async function GET(request: Request) {
     const tokenData = (await tokenResponse.json()) as {
       ok: boolean;
       error?: string;
+      access_token?: string;
       authed_user?: { id?: string; access_token?: string };
       team?: { id?: string; name?: string };
     };
@@ -55,11 +56,11 @@ export async function GET(request: Request) {
     }
 
     const userId = tokenData.authed_user?.id;
-    const userToken = tokenData.authed_user?.access_token;
+    const userToken = tokenData.authed_user?.access_token ?? tokenData.access_token;
 
     if (!userId || !userToken) {
       return NextResponse.json(
-        { ok: false, message: "Slack did not return a user token." },
+        { ok: false, message: "Slack did not return a usable token." },
         { status: 400 }
       );
     }
