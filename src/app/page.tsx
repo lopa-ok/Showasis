@@ -249,7 +249,12 @@ export default function HomePage() {
                           className={`calendar-slot ${slot.type} ${slot.isBooked ? "booked" : "open"}`}
                         >
                           <div className="slot-info">
-                            <p className="slot-time">{formatTime(slot.startTime, timezone)}</p>
+                            <p className="slot-time">
+                              {formatTime(slot.startTime, timezone)} 
+                              {slot.type === "booking" && (
+                                <span className="ml-2 text-sm text-[var(--color-accent)] font-medium">Shower {slot.id.endsWith("-2") ? "B" : "A"}</span>
+                              )}
+                            </p>
                             <p className="slot-range">{formatRange(slot.startTime, slot.endTime, timezone)}</p>
                             <p className="slot-meta">
                               {slot.type === "buffer"

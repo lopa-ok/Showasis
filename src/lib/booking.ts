@@ -55,9 +55,9 @@ export const generateScheduleSlots = (options?: {
             throw new Error("dayEnd must be after dayStart.");
         }
 
-        const addSlot = (cursor: DateTime, type: SlotType, minutes: number) => {
+        const addSlot = (cursor: DateTime, type: SlotType, minutes: number, showerId: number = 1) => {
             slots.push({
-                id: `${cursor.toFormat("yyyyLLdd")}-${cursor.toFormat("HHmm")}-${type}`,
+                id: `${cursor.toFormat("yyyyLLdd")}-${cursor.toFormat("HHmm")}-${type}-${showerId}`,
                 createdTime: toIso(cursor),
                 startTime: toIso(cursor),
                 endTime: toIso(cursor.plus({ minutes })),
@@ -70,10 +70,11 @@ export const generateScheduleSlots = (options?: {
         let cursor = dayStartTime;
         while (cursor.plus({ minutes: cycleMinutes }) <= dayEndTime) {
             for (let i = 0; i < bookingsPerCycle; i += 1) {
-                addSlot(cursor, "booking", bookingMinutes);
+                addSlot(cursor, "booking", bookingMinutes, 1);
+                addSlot(cursor, "booking", bookingMinutes, 2);
                 cursor = cursor.plus({ minutes: bookingMinutes });
             }
-            addSlot(cursor, "buffer", bufferMinutes);
+            addSlot(cursor, "buffer", bufferMinutes, 1);
             cursor = cursor.plus({ minutes: bufferMinutes });
         }
     }
@@ -82,10 +83,13 @@ export const generateScheduleSlots = (options?: {
 };
 
 export const mergeBookingsIntoSlots = (slots: Slot[], bookings: Booking[]): Slot[] => {
-    const bookingByTime = new Map<string, Booking>();
+    const bookingsByTime = new Map<string, Booking[]>();
     bookings.forEach((booking) => {
         const key = `${booking.startTime}|${booking.endTime}`;
-        bookingByTime.set(key, booking);
+        if (!bookingsByTime.has(key)) {
+            bookingsByTime.set(key, []);
+        }
+        bookingsByTime.get(key)!.push(booking);
     });
 
     return slots.map((slot) => {
@@ -93,8 +97,12 @@ export const mergeBookingsIntoSlots = (slots: Slot[], bookings: Booking[]): Slot
             return slot;
         }
         const key = `${slot.startTime}|${slot.endTime}`;
-        const booking = bookingByTime.get(key);
+        const queue = bookingsByTime.get(key);
+        if (!queue || queue.length === 0) return slot;
+        
+        const booking = queue.shift();
         if (!booking) return slot;
+        
         return {
             ...slot,
             createdTime: booking.createdTime,
@@ -123,18 +131,18 @@ export const getScheduleWarnings = (slots: Slot[]): string[] => {
 
         if (slot.type === "booking") {
             bookingCount += 1;
-            if (bookingCount > 3) {
-                warnings.push(`Slot ${index + 1} breaks the 3-booking cycle.`);
+            if (bookingCount > 6) {
+                warnings.push(`Slot ${index + 1} breaks the 3-booking cycle (6 slots total).`);
             }
         } else {
-            if (bookingCount !== 3) {
+            if (bookingCount !== 6) {
                 warnings.push(`Slot ${index + 1} is a buffer but it only comes after ${bookingCount} booking(s).`);
             }
             bookingCount = 0;
         }
     });
 
-    if (bookingCount !== 0 && bookingCount !== 3) {
+    if (bookingCount !== 0 && bookingCount !== 6) {
         warnings.push(`Final Cycle ends after ${bookingCount} booking slots.`);
     }
     return warnings;
@@ -173,7 +181,7 @@ export const validateBooking = (slot: Slot, allSlots: Slot[], userId: string) =>
     for (const entry of allSlots) {
         if (entry.type === "booking") {
             bookingCount += 1;
-            if (bookingCount > 3 && entry.id === slot.id) {
+            if (bookingCount > 6 && entry.id === slot.id) {
                 return { ok: false, message: "That slot breaks the 3-booking cycle." };
             }
         } else {
