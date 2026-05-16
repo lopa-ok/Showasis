@@ -27,7 +27,7 @@ export const generateScheduleSlots = (options?: {
     const days = options?.days ?? 7;
     const dayStart = options?.dayStart ?? "00:00";
     const dayEnd = options?.dayEnd ?? "23:59";
-    const bookingMinutes = options?.bookingMinutes ?? 15;
+    const bookingMinutes = options?.bookingMinutes ?? 20;
     const bufferMinutes = options?.bufferMinutes ?? 5;
     const bookingsPerCycle = options?.bookingsPerCycle ?? 3;
 
