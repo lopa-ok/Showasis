@@ -121,11 +121,11 @@ export const getScheduleWarnings = (slots: Slot[]): string[] => {
         const end = toDateTime(slot.endTime);
         const duration = Math.round(end.diff(start, "minutes").minutes);
 
-        if (slot.type === "booking" && duration !== 15) {
+        if (slot.type === "booking" && duration !== 15 && duration !== 20) {
             warnings.push(`Slot ${index + 1} is a booking but it lasts ${duration} minutes.`);
         }
 
-        if (slot.type === "buffer" && duration !== 5) {
+        if (slot.type === "buffer" && duration !== 5 && duration !== 10) {
             warnings.push(`Slot ${index + 1} is a buffer but it only lasts ${duration} minutes.`);
         }
 
@@ -193,8 +193,8 @@ export const validateBooking = (slot: Slot, allSlots: Slot[], userId: string) =>
         return { ok: false, message: "Only booking slots can be reserved." };
     }
 
-    if (duration !== 15) {
-        return { ok: false, message: "Booking slots must last exactly 15 minutes." };
+    if (duration !== 15 && duration !== 20) {
+        return { ok: false, message: "Booking slots must last exactly 15 or 20 minutes." };
     }
 
     if (slot.bookedBy) {
