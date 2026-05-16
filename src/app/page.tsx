@@ -239,56 +239,66 @@ export default function HomePage() {
                     </div>
                     <p className="day-count">{day.slots.length} slots</p>
                   </div>
-                  <ul className="calendar-slots">
-                    {day.slots.map((slot) => {
-                      const isOwner = slot.bookedBy && slot.bookedBy === identity.id;
-                      const canInteract = isSignedIn && slot.type === "booking";
-                      return (
-                        <li
-                          key={slot.id}
-                          className={`calendar-slot ${slot.type} ${slot.isBooked ? "booked" : "open"}`}
-                        >
-                          <div className="slot-info">
-                            <p className="slot-time">
-                              {formatTime(slot.startTime, timezone)} 
-                              {slot.type === "booking" && (
-                                <span className="ml-2 text-sm text-[var(--color-accent)] font-medium">Shower {slot.id.endsWith("-2") ? "B" : "A"}</span>
-                              )}
-                            </p>
-                            <p className="slot-range">{formatRange(slot.startTime, slot.endTime, timezone)}</p>
-                            <p className="slot-meta">
-                              {slot.type === "buffer"
-                                ? "buffer slot"
-                                : slot.isBooked
-                                  ? `booked by ${slot.bookedName}`
-                                  : "open"}
-                            </p>
-                          </div>
-                          <div className="slot-actions">
-                            {slot.type === "buffer" ? (
-                              <span className="slot-chip">buffer</span>
-                            ) : slot.isBooked ? (
-                              <button
-                                className={`button ${isOwner ? "button-ghost" : "button-disabled"}`}
-                                onClick={() => isOwner && handleCancel(slot.id)}
-                                disabled={!isOwner}
-                              >
-                                {isOwner ? "cancel" : "booked"}
-                              </button>
-                            ) : (
-                              <button
-                                className="button button-accent"
-                                onClick={() => handleBook(slot.id)}
-                                disabled={!canInteract}
-                              >
-                                book
-                              </button>
-                            )}
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
+                  <div className="flex flex-col gap-3">
+                    {Object.values(
+                      day.slots.reduce((acc, slot) => {
+                        if (!acc[slot.startTime]) acc[slot.startTime] = [];
+                        acc[slot.startTime].push(slot);
+                        return acc;
+                      }, {} as Record<string, SlotView[]>)
+                    ).map((timeGroup) => (
+                      <div key={timeGroup[0].startTime} className={`grid ${timeGroup.length > 1 ? "grid-cols-2" : "grid-cols-1"} gap-3`}>
+                        {timeGroup.map((slot) => {
+                          const isOwner = slot.bookedBy && slot.bookedBy === identity.id;
+                          const canInteract = isSignedIn && slot.type === "booking";
+                          return (
+                            <div
+                              key={slot.id}
+                              className={`calendar-slot ${slot.type} ${slot.isBooked ? "booked" : "open"}`}
+                            >
+                              <div className="slot-info">
+                                <p className="slot-time">
+                                  {formatTime(slot.startTime, timezone)} 
+                                  {slot.type === "booking" && (
+                                    <span className="ml-2 text-sm text-[var(--color-accent)] font-medium">Shower {slot.id.endsWith("-2") ? "B" : "A"}</span>
+                                  )}
+                                </p>
+                                <p className="slot-range">{formatRange(slot.startTime, slot.endTime, timezone)}</p>
+                                <p className="slot-meta">
+                                  {slot.type === "buffer"
+                                    ? "buffer slot"
+                                    : slot.isBooked
+                                      ? `booked by ${slot.bookedName}`
+                                      : "open"}
+                                </p>
+                              </div>
+                              <div className="slot-actions">
+                                {slot.type === "buffer" ? (
+                                  <span className="slot-chip">buffer</span>
+                                ) : slot.isBooked ? (
+                                  <button
+                                    className={`button ${isOwner ? "button-ghost" : "button-disabled"}`}
+                                    onClick={() => isOwner && handleCancel(slot.id)}
+                                    disabled={!isOwner}
+                                  >
+                                    {isOwner ? "cancel" : "booked"}
+                                  </button>
+                                ) : (
+                                  <button
+                                    className="button button-accent"
+                                    onClick={() => handleBook(slot.id)}
+                                    disabled={!canInteract}
+                                  >
+                                    book
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>
