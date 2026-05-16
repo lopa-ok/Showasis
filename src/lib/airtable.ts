@@ -19,6 +19,10 @@ const airtableFetch = async <T>(url: string, init: RequestInit = {}): Promise<T>
 
   if (!response.ok) {
     const body = await response.text();
+    console.error(`Airtable request failed (${response.status}): ${body}`);
+    if (response.status === 429) {
+       return { records: [] } as unknown as T; // Return empty records on rate limit to keep UI alive
+    }
     throw new Error(`Airtable request failed (${response.status}): ${body}`);
   }
 
